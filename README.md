@@ -20,7 +20,7 @@ That's all there is to it. The tracker won't appear on the screen until you have
 
 **HOW TO CUSTOMIZE:**
 
-In order to customize the tracker, you will need to open the RDV_Fusion_Item_Tracker.lua in a text editor (Notepad++, VS Code, etc.). I left comments in the code, so you may be able to figure it out. There are coordiantes you can change to move the tracker icons, but it is a bit tedious, as you currently have to change the coordinates individually. If you want to move it to the right side of the screen, there's also a line that you can edit to move the black border there, which is also commented in the code.
+In order to customize the tracker, you will need to open the RDV_Fusion_Item_Tracker.lua in a text editor (Notepad++, VS Code, etc.). I left comments in the code, so you may be able to figure it out. There are coordinates you can change to move the tracker icons, but it is a bit tedious, as you currently have to change the coordinates individually. If you want to move it to the right side of the screen, there's also a line that you can edit to move the black border to the other side, which is commented in the code.
 
 If you have any issues, questions, or want to request something, feel free to contact me on Discord, my username is variasu (aka baria). Currently, I plan to add the Level 0 Security Card at some point for whenever Door Lock Rando becomes available, and I may add maximum ammo counts at some point.
 
