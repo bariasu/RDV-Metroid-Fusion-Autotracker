@@ -1,6 +1,6 @@
 # Autotracker for Randovania Metroid Fusion
 
-This Lua script is made to work with Randovania's Metroid Fusion randomizer and BizHawk 2.9+ for Windows and Linux
+This Lua script is made to work with Randovania's Metroid Fusion randomizer and **BizHawk 2.9+** for Windows and Linux
 
 **HOW TO USE:**
 
