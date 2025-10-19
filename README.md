@@ -4,7 +4,9 @@ This Lua script is made to work with Randovania's Metroid Fusion randomizer and 
 
 **HOW TO USE:**
 
--Once you've extracted RDVFusion-BizHawk-Autotracker-v1.2.zip, place the newly created RDVFusion-Autotracker-v1.2 folder somewhere you can find it.
+[Download RDVFusion_Autotracker_v1.2.zip from the Release Page](https://github.com/bariasu/RDV-Metroid-Fusion-Autotracker/releases/tag/v1.2)
+
+-Extract the .zip, and place the newly created RDVFusion-Autotracker-v1.2 folder somewhere you can find it.
 
 -Then, open BizHawk, and open the game.
 
