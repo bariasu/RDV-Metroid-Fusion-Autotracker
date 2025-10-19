@@ -1,6 +1,6 @@
 --written by baria and clue :D
 
-local CHECK_INTERVAL = 60 --number of frames between loops, set higher to decrease frequency of memory reads
+local CHECK_INTERVAL = 120 --number of frames between loops, set higher to decrease frequency of memory reads if you are experiencing performance issues
 
 --storing memory locations
 local BEAMS_ADDRESS = 0x300003B
