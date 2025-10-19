@@ -4,9 +4,13 @@ This Lua script is made to work with Randovania's Metroid Fusion randomizer and 
 
 HOW TO USE:
 -Once you've extracted RDVFusion-BizHawk-Autotracker-v1.2.zip, place the newly created RDVFusion-Autotracker-v1.2 folder somewhere you can find it.
+
 -Then, open BizHawk, and open the game.
+
 -In BizHawk, navigate to Tools > Lua Console
+
 -In the Lua Console, navigate to Script > Open Script
+
 -In the window that pops up, navigate to the RDVFusion-BizHawk-Autotracker-v1.2 folder, and choose to open RDV_Fusion_Item_Tracker.lua
 
 That's all there is to it. The tracker won't appear on the screen until you have control of Samus, after the intial Adam/Computer text cutscene.
