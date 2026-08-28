@@ -1,5 +1,11 @@
 --written by baria and clue :D
 
+-- USER CONFIGURABLE SETTINGS:
+local TRACKER_DIRECTION = "left" -- values are "left" and "right"
+local INCLUDE_L0 = true  -- values are true and false
+
+
+-- Script starts here
 local CHECK_INTERVAL = 30 --number of frames between memory reads
 
 --this variable chooses which memory read to perform on a given frame, then increments itself
@@ -90,6 +96,8 @@ local IMAGES = {
 	spacejump_gray    = "images/spacejump_gray.gif",
 	screwattack       = "images/screwattack.gif",
 	screwattack_gray  = "images/screwattack_gray.gif",
+	l0                = "images/l0.gif",
+	l0_gray           = "images/l0_gray.gif",
 	l1                = "images/l1.gif",
 	l1_gray           = "images/l1_gray.gif",
 	l2                = "images/l2.gif",
@@ -102,7 +110,22 @@ local IMAGES = {
 }
 
 --creates the empty space within the bizhawk window
-client.SetGameExtraPadding(88,0,0,0)
+local padding = 88
+local offset = 0
+if TRACKER_DIRECTION == "left" then
+    client.SetGameExtraPadding(padding, 0, 0, 0)
+elseif TRACKER_DIRECTION == "right" then
+    client.SetGameExtraPadding(0, 0, padding, 0)
+    offset = 240
+else 
+    error("Invalid configuration for TRACKER_DIRECTION")
+end
+
+local l0offset = 0
+if INCLUDE_L0 then
+    l0offset = 10
+end
+
 
 --bizhawk function, necessary for drawing images
 gui.use_surface("emucore")
@@ -140,139 +163,145 @@ while true do
         --the coordinates can be changed to adjust the position of the tracker items in the bizhawk window.
         if CHECK_LOADOUT then
             if BEAMS_VALUE & CHARGE_VALUE == CHARGE_VALUE then
-                gui.drawImage(IMAGES.charge, 2, 50, nil, nil, false)
+                gui.drawImage(IMAGES.charge, offset+2, 50, nil, nil, false)
             else
-                gui.drawImage(IMAGES.charge_gray, 2, 50, nil, nil, false)
+                gui.drawImage(IMAGES.charge_gray, offset+2, 50, nil, nil, false)
             end
 
             if BEAMS_VALUE & WIDE_VALUE == WIDE_VALUE then
-                gui.drawImage(IMAGES.wide, 19, 50, nil, nil, false)
+                gui.drawImage(IMAGES.wide, offset+19, 50, nil, nil, false)
             else
-                gui.drawImage(IMAGES.wide_gray, 19, 50, nil, nil, false)
+                gui.drawImage(IMAGES.wide_gray, offset+19, 50, nil, nil, false)
             end
 
             if BEAMS_VALUE & PLASMA_VALUE == PLASMA_VALUE then
-                gui.drawImage(IMAGES.plasma, 36, 50)
+                gui.drawImage(IMAGES.plasma, offset+36, 50)
             else
-                gui.drawImage(IMAGES.plasma_gray, 36, 50)
+                gui.drawImage(IMAGES.plasma_gray, offset+36, 50)
             end
 
             if BEAMS_VALUE & WAVE_VALUE == WAVE_VALUE then
-                gui.drawImage(IMAGES.wave, 53, 50, nil, nil, false)
+                gui.drawImage(IMAGES.wave, offset+53, 50, nil, nil, false)
             else
-                gui.drawImage(IMAGES.wave_gray, 53, 50, nil, nil, false)
+                gui.drawImage(IMAGES.wave_gray, offset+53, 50, nil, nil, false)
             end
 
             if BEAMS_VALUE & ICE_VALUE == ICE_VALUE then
-                gui.drawImage(IMAGES.icebeam, 70, 50, nil, nil, false)
+                gui.drawImage(IMAGES.icebeam, offset+70, 50, nil, nil, false)
             else
-                gui.drawImage(IMAGES.icebeam_gray, 70, 50, nil, nil, false)
+                gui.drawImage(IMAGES.icebeam_gray, offset+70, 50, nil, nil, false)
             end
 
             if WEAPONS_VALUE & BASE_MISSILE_VALUE == BASE_MISSILE_VALUE then
-                gui.drawImage(IMAGES.missiles, 10, 68, nil, nil, false)
+                gui.drawImage(IMAGES.missiles, offset+10, 68, nil, nil, false)
             else
-                gui.drawImage(IMAGES.missiles_gray, 10, 68, nil, nil, false)
+                gui.drawImage(IMAGES.missiles_gray, offset+10, 68, nil, nil, false)
             end
 
             if WEAPONS_VALUE & SUPER_MISSILE_VALUE == SUPER_MISSILE_VALUE then
-                gui.drawImage(IMAGES.supers, 26, 68)
+                gui.drawImage(IMAGES.supers, offset+26, 68)
             else
-                gui.drawImage(IMAGES.supers_gray, 26, 68, nil, nil, false)
+                gui.drawImage(IMAGES.supers_gray, offset+26, 68, nil, nil, false)
             end
 
             if WEAPONS_VALUE & ICE_MISSILE_VALUE == ICE_MISSILE_VALUE then
-                gui.drawImage(IMAGES.icemissiles, 43, 68, nil, nil, false)
+                gui.drawImage(IMAGES.icemissiles, offset+43, 68, nil, nil, false)
             else
-                gui.drawImage(IMAGES.icemissiles_gray, 43, 68, nil, nil, false)
+                gui.drawImage(IMAGES.icemissiles_gray, offset+43, 68, nil, nil, false)
             end
 
             if WEAPONS_VALUE & DIFFUSION_MISSILE_VALUE == DIFFUSION_MISSILE_VALUE then
-                gui.drawImage(IMAGES.diffusion, 60, 68, nil, nil, false)
+                gui.drawImage(IMAGES.diffusion, offset+60, 68, nil, nil, false)
             else
-                gui.drawImage(IMAGES.diffusion_gray, 60, 68, nil, nil, false)
+                gui.drawImage(IMAGES.diffusion_gray, offset+60, 68, nil, nil, false)
             end
 
             if MOVEMENT_VALUE & MORPH_BALL_VALUE == MORPH_BALL_VALUE then
-                gui.drawImage(IMAGES.morph, 2, 86, nil, nil, false)
+                gui.drawImage(IMAGES.morph, offset+2, 86, nil, nil, false)
             else
-                gui.drawImage(IMAGES.morph_gray, 2, 86, nil, nil, false)
+                gui.drawImage(IMAGES.morph_gray, offset+2, 86, nil, nil, false)
             end
 
             if WEAPONS_VALUE & BOMBS_VALUE == BOMBS_VALUE then
-                gui.drawImage(IMAGES.bombs, 19, 86, nil, nil, false)
+                gui.drawImage(IMAGES.bombs, offset+19, 86, nil, nil, false)
             else
-                gui.drawImage(IMAGES.bombs_gray, 19, 86, nil, nil, false)
+                gui.drawImage(IMAGES.bombs_gray, offset+19, 86, nil, nil, false)
             end
 
             if WEAPONS_VALUE & POWER_BOMBS_VALUE == POWER_BOMBS_VALUE then
-                gui.drawImage(IMAGES.powerbombs, 36, 86, nil, nil, false)
+                gui.drawImage(IMAGES.powerbombs, offset+36, 86, nil, nil, false)
             else
-                gui.drawImage(IMAGES.powerbombs_gray, 36, 86, nil, nil, false)
+                gui.drawImage(IMAGES.powerbombs_gray, offset+36, 86, nil, nil, false)
             end
 
             if MOVEMENT_VALUE & VARIA_VALUE == VARIA_VALUE then
-                gui.drawImage(IMAGES.varia, 53, 86, nil, nil, false)
+                gui.drawImage(IMAGES.varia, offset+53, 86, nil, nil, false)
             else
-                gui.drawImage(IMAGES.varia_gray, 53, 86, nil, nil, false)
+                gui.drawImage(IMAGES.varia_gray, offset+53, 86, nil, nil, false)
             end
 
             if MOVEMENT_VALUE & GRAVITY_VALUE == GRAVITY_VALUE then
-                gui.drawImage(IMAGES.gravity, 70, 86, nil, nil, false)
+                gui.drawImage(IMAGES.gravity, offset+70, 86, nil, nil, false)
             else
-                gui.drawImage(IMAGES.gravity_gray, 70, 86, nil, nil, false)
+                gui.drawImage(IMAGES.gravity_gray, offset+70, 86, nil, nil, false)
             end
 
             if MOVEMENT_VALUE & HIGH_JUMP_VALUE == HIGH_JUMP_VALUE then
-                gui.drawImage(IMAGES.highjump, 9, 104, nil, nil, false)
+                gui.drawImage(IMAGES.highjump, offset+9, 104, nil, nil, false)
             else
-                gui.drawImage(IMAGES.highjump_gray, 9, 104, nil, nil, false)
+                gui.drawImage(IMAGES.highjump_gray, offset+9, 104, nil, nil, false)
             end
 
             if MOVEMENT_VALUE & SPEEDBOOSTER_VALUE == SPEEDBOOSTER_VALUE then
-                gui.drawImage(IMAGES.speed, 26, 104, nil, nil, false)
+                gui.drawImage(IMAGES.speed, offset+26, 104, nil, nil, false)
             else
-                gui.drawImage(IMAGES.speed_gray, 26, 104, nil, nil, false)
+                gui.drawImage(IMAGES.speed_gray, offset+26, 104, nil, nil, false)
             end
 
             if MOVEMENT_VALUE & SPACE_JUMP_VALUE == SPACE_JUMP_VALUE then
-                gui.drawImage(IMAGES.spacejump, 43, 104, nil, nil, false)
+                gui.drawImage(IMAGES.spacejump, offset+43, 104, nil, nil, false)
             else
-                gui.drawImage(IMAGES.spacejump_gray, 43, 104, nil, nil, false)
+                gui.drawImage(IMAGES.spacejump_gray, offset+43, 104, nil, nil, false)
             end
 
             if MOVEMENT_VALUE & SCREW_ATTACK_VALUE == SCREW_ATTACK_VALUE then
-                gui.drawImage(IMAGES.screwattack, 60, 104, nil, nil, false)
+                gui.drawImage(IMAGES.screwattack, offset+60, 104, nil, nil, false)
             else
-                gui.drawImage(IMAGES.screwattack_gray, 60, 104, nil, nil, false)
+                gui.drawImage(IMAGES.screwattack_gray, offset+60, 104, nil, nil, false)
+            end
+
+            if (SECURITY_VALUE & GRAY_VALUE == GRAY_VALUE) and INCLUDE_L0 then
+                gui.drawImage(IMAGES.l1, offset+2, 122, nil, nil, false)
+            else
+                gui.drawImage(IMAGES.l1_gray, offset+2, 122, nil, nil, false)
             end
 
             if SECURITY_VALUE & BLUE_VALUE == BLUE_VALUE then
-                gui.drawImage(IMAGES.l1, 9, 122, nil, nil, false)
+                gui.drawImage(IMAGES.l1, offset+l0offset+9, 122, nil, nil, false)
             else
-                gui.drawImage(IMAGES.l1_gray, 9, 122, nil, nil, false)
+                gui.drawImage(IMAGES.l1_gray, offset+l0offset+9, 122, nil, nil, false)
             end
 
             if SECURITY_VALUE & GREEN_VALUE == GREEN_VALUE then
-                gui.drawImage(IMAGES.l2, 26, 122, nil, nil, false)
+                gui.drawImage(IMAGES.l2, offset+l0offset+26, 122, nil, nil, false)
             else
-                gui.drawImage(IMAGES.l2_gray, 26, 122, nil, nil, false)
+                gui.drawImage(IMAGES.l2_gray, offset+l0offset+26, 122, nil, nil, false)
             end
 
             if SECURITY_VALUE & YELLOW_VALUE == YELLOW_VALUE then
-                gui.drawImage(IMAGES.l3, 43, 122, nil, nil, false)
+                gui.drawImage(IMAGES.l3, offset+l0offset+43, 122, nil, nil, false)
             else
-                gui.drawImage(IMAGES.l3_gray, 43, 122, nil, nil, false)
+                gui.drawImage(IMAGES.l3_gray, offset+l0offset+43, 122, nil, nil, false)
             end
 
             if SECURITY_VALUE & RED_VALUE == RED_VALUE then
-                gui.drawImage(IMAGES.l4, 60, 122, nil, nil, false)
+                gui.drawImage(IMAGES.l4, offset+l0offset+60, 122, nil, nil, false)
             else
-                gui.drawImage(IMAGES.l4_gray, 60, 122, nil, nil, false)
+                gui.drawImage(IMAGES.l4_gray, offset+l0offset+60, 122, nil, nil, false)
             end
 
-            gui.drawImage(IMAGES.metroid, 20, 140, nil, nil, false)
-            gui.drawString(37, 142, " " .. METROIDS_OBTAINED_VALUE .. "/" .. METROIDS_REQUIRED_VALUE,"white")
+            gui.drawImage(IMAGES.metroid, offset+20, 140, nil, nil, false)
+            gui.drawString(offset+37, 142, " " .. METROIDS_OBTAINED_VALUE .. "/" .. METROIDS_REQUIRED_VALUE,"white")
 
             --caches the player's loadout after obtaining an item
             BEAMS_PRIOR = BEAMS_VALUE
