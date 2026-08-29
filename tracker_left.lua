@@ -2,7 +2,7 @@
 
 -- USER CONFIGURABLE SETTINGS:
 local TRACKER_DIRECTION = "left" -- values are "left" and "right"
-local INCLUDE_L0 = true  -- values are true and false
+local INCLUDE_L0 = false  -- values are true and false
 
 
 -- Script starts here
@@ -43,6 +43,7 @@ local VARIA_VALUE = 1 << 4
 local GRAVITY_VALUE = 1 << 5
 local MORPH_BALL_VALUE = 1 << 6
 
+local GRAY_VALUE = 1 << 0
 local BLUE_VALUE = 1 << 1
 local GREEN_VALUE = 1 << 2
 local YELLOW_VALUE = 1 << 3
@@ -59,64 +60,47 @@ local SECURITY_VALUE = memory.read_u8(SECURITY_ADDRESS)
 local CHECK_LOADOUT, BEAMS_PRIOR, WEAPONS_PRIOR, MOVEMENT_PRIOR, SECURITY_PRIOR, METROIDS_PRIOR
 
 --storing image paths in a table
-local IMAGES = {
-	charge            = "images/charge.gif",
-	charge_gray       = "images/charge_gray.gif",
-	wide              = "images/wide.gif",
-	wide_gray         = "images/wide_gray.gif",
-	plasma            = "images/plasma.gif",
-	plasma_gray       = "images/plasma_gray.gif",
-	wave              = "images/wave.gif",
-	wave_gray         = "images/wave_gray.gif",
-	icebeam           = "images/icebeam.gif",
-	icebeam_gray      = "images/icebeam_gray.gif",
-	missiles          = "images/missiles.gif",
-	missiles_gray     = "images/missiles_gray.gif",
-	supers            = "images/supers.gif",
-	supers_gray       = "images/supers_gray.gif",
-	icemissiles       = "images/icemissiles.gif",
-	icemissiles_gray  = "images/icemissiles_gray.gif",
-	diffusion         = "images/diffusion.gif",
-	diffusion_gray    = "images/diffusion_gray.gif",
-	morph             = "images/morph.gif",
-	morph_gray        = "images/morph_gray.gif",
-	bombs             = "images/bombs.gif",
-	bombs_gray        = "images/bombs_gray.gif",
-	powerbombs        = "images/powerbombs.gif",
-	powerbombs_gray   = "images/powerbombs_gray.gif",
-	varia             = "images/varia.gif",
-	varia_gray        = "images/varia_gray.gif",
-	gravity           = "images/gravity.gif",
-	gravity_gray      = "images/gravity_gray.gif",
-	highjump          = "images/highjump.gif",
-	highjump_gray     = "images/highjump_gray.gif",
-	speed             = "images/speed.gif",
-	speed_gray        = "images/speed_gray.gif",
-	spacejump         = "images/spacejump.gif",
-	spacejump_gray    = "images/spacejump_gray.gif",
-	screwattack       = "images/screwattack.gif",
-	screwattack_gray  = "images/screwattack_gray.gif",
-	l0                = "images/l0.gif",
-	l0_gray           = "images/l0_gray.gif",
-	l1                = "images/l1.gif",
-	l1_gray           = "images/l1_gray.gif",
-	l2                = "images/l2.gif",
-	l2_gray           = "images/l2_gray.gif",
-	l3                = "images/l3.gif",
-	l3_gray           = "images/l3_gray.gif",
-	l4                = "images/l4.gif",
-	l4_gray           = "images/l4_gray.gif",
-	metroid           = "images/metroid.gif"
+-- Per-item definitions: images + default coordinates (relative to `offset`)
+local ITEM_DEFS = {
+    charge = { active = "images/charge.gif", inactive = "images/charge_gray.gif", x = 2, y = 50 },
+    wide = { active = "images/wide.gif", inactive = "images/wide_gray.gif", x = 19, y = 50 },
+    plasma = { active = "images/plasma.gif", inactive = "images/plasma_gray.gif", x = 36, y = 50 },
+    wave = { active = "images/wave.gif", inactive = "images/wave_gray.gif", x = 53, y = 50 },
+    icebeam = { active = "images/icebeam.gif", inactive = "images/icebeam_gray.gif", x = 70, y = 50 },
+
+    missiles = { active = "images/missiles.gif", inactive = "images/missiles_gray.gif", x = 10, y = 68 },
+    supers = { active = "images/supers.gif", inactive = "images/supers_gray.gif", x = 26, y = 68 },
+    icemissiles = { active = "images/icemissiles.gif", inactive = "images/icemissiles_gray.gif", x = 43, y = 68 },
+    diffusion = { active = "images/diffusion.gif", inactive = "images/diffusion_gray.gif", x = 60, y = 68 },
+
+    morph = { active = "images/morph.gif", inactive = "images/morph_gray.gif", x = 2, y = 86 },
+    bombs = { active = "images/bombs.gif", inactive = "images/bombs_gray.gif", x = 19, y = 86 },
+    powerbombs = { active = "images/powerbombs.gif", inactive = "images/powerbombs_gray.gif", x = 36, y = 86 },
+    varia = { active = "images/varia.gif", inactive = "images/varia_gray.gif", x = 53, y = 86 },
+    gravity = { active = "images/gravity.gif", inactive = "images/gravity_gray.gif", x = 70, y = 86 },
+
+    highjump = { active = "images/highjump.gif", inactive = "images/highjump_gray.gif", x = 9, y = 104 },
+    speed = { active = "images/speed.gif", inactive = "images/speed_gray.gif", x = 26, y = 104 },
+    spacejump = { active = "images/spacejump.gif", inactive = "images/spacejump_gray.gif", x = 43, y = 104 },
+    screwattack = { active = "images/screwattack.gif", inactive = "images/screwattack_gray.gif", x = 60, y = 104 },
+
+    l0 = { active = "images/l0.gif", inactive = "images/l0_gray.gif", x = 2, y = 122 },
+    l1 = { active = "images/l1.gif", inactive = "images/l1_gray.gif", x = 9, y = 122 },
+    l2 = { active = "images/l2.gif", inactive = "images/l2_gray.gif", x = 26, y = 122 },
+    l3 = { active = "images/l3.gif", inactive = "images/l3_gray.gif", x = 43, y = 122 },
+    l4 = { active = "images/l4.gif", inactive = "images/l4_gray.gif", x = 60, y = 122 },
+
+    metroid = { active = "images/metroid.gif", inactive = "images/metroid.gif", x = 20, y = 140 },
 }
 
 --creates the empty space within the bizhawk window
 local padding = 88
-local offset = 0
+local global_offset = 0
 if TRACKER_DIRECTION == "left" then
     client.SetGameExtraPadding(padding, 0, 0, 0)
 elseif TRACKER_DIRECTION == "right" then
     client.SetGameExtraPadding(0, 0, padding, 0)
-    offset = 240
+    global_offset = 240
 else 
     error("Invalid configuration for TRACKER_DIRECTION")
 end
@@ -130,13 +114,22 @@ end
 --bizhawk function, necessary for drawing images
 gui.use_surface("emucore")
 
+-- helper to draw an item by key, using ITEM_DEFS
+local function draw_item(active, def, x_offset)
+    local img = active and def.active or def.inactive
+    local x = def.x + global_offset
+    if x_offset then
+        x = x + x_offset
+    end
+    gui.drawImage(img, x, def.y, nil, nil, false)
+end
+
 --the main loop that reads the game's memory and draws the tracker images
 while true do
     local CURRENT_FRAME = emu.framecount()
 
     --this allows the script to check the player's loadout only at the set interval, and only when in-game, unpaused, while not talking to Adam
     if CURRENT_FRAME % CHECK_INTERVAL == 0 and memory.read_u16_le(GAMEMODE_ADDRESS) == 1 then
-
         --stores the values of the player's entire loadout, the memory reads are distributed across different frames to prevent lag spikes
         if ADDRESS_SELECTOR == 1 then
             BEAMS_VALUE = memory.read_u8(BEAMS_ADDRESS)
@@ -162,146 +155,38 @@ while true do
         --these statements use bitwise AND to determine which icon to draw for each item, and are only triggered if the player's loadout has changed.
         --the coordinates can be changed to adjust the position of the tracker items in the bizhawk window.
         if CHECK_LOADOUT then
-            if BEAMS_VALUE & CHARGE_VALUE == CHARGE_VALUE then
-                gui.drawImage(IMAGES.charge, offset+2, 50, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.charge_gray, offset+2, 50, nil, nil, false)
-            end
+            draw_item((BEAMS_VALUE & CHARGE_VALUE) == CHARGE_VALUE, ITEM_DEFS.charge)
+            draw_item((BEAMS_VALUE & WIDE_VALUE) == WIDE_VALUE, ITEM_DEFS.wide)
+            draw_item((BEAMS_VALUE & PLASMA_VALUE) == PLASMA_VALUE, ITEM_DEFS.plasma)
+            draw_item((BEAMS_VALUE & WAVE_VALUE) == WAVE_VALUE, ITEM_DEFS.wave)
+            draw_item((BEAMS_VALUE & ICE_VALUE) == ICE_VALUE, ITEM_DEFS.icebeam)
 
-            if BEAMS_VALUE & WIDE_VALUE == WIDE_VALUE then
-                gui.drawImage(IMAGES.wide, offset+19, 50, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.wide_gray, offset+19, 50, nil, nil, false)
-            end
+            draw_item((WEAPONS_VALUE & BASE_MISSILE_VALUE) == BASE_MISSILE_VALUE, ITEM_DEFS.missiles)
+            draw_item((WEAPONS_VALUE & SUPER_MISSILE_VALUE) == SUPER_MISSILE_VALUE, ITEM_DEFS.supers)
+            draw_item((WEAPONS_VALUE & ICE_MISSILE_VALUE) == ICE_MISSILE_VALUE, ITEM_DEFS.icemissiles)
+            draw_item((WEAPONS_VALUE & DIFFUSION_MISSILE_VALUE) == DIFFUSION_MISSILE_VALUE, ITEM_DEFS.diffusion)
 
-            if BEAMS_VALUE & PLASMA_VALUE == PLASMA_VALUE then
-                gui.drawImage(IMAGES.plasma, offset+36, 50)
-            else
-                gui.drawImage(IMAGES.plasma_gray, offset+36, 50)
-            end
+            draw_item((MOVEMENT_VALUE & MORPH_BALL_VALUE) == MORPH_BALL_VALUE, ITEM_DEFS.morph)
+            draw_item((WEAPONS_VALUE & BOMBS_VALUE) == BOMBS_VALUE, ITEM_DEFS.bombs)
+            draw_item((WEAPONS_VALUE & POWER_BOMBS_VALUE) == POWER_BOMBS_VALUE, ITEM_DEFS.powerbombs)
+            draw_item((MOVEMENT_VALUE & VARIA_VALUE) == VARIA_VALUE, ITEM_DEFS.varia)
+            draw_item((MOVEMENT_VALUE & GRAVITY_VALUE) == GRAVITY_VALUE, ITEM_DEFS.gravity)
 
-            if BEAMS_VALUE & WAVE_VALUE == WAVE_VALUE then
-                gui.drawImage(IMAGES.wave, offset+53, 50, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.wave_gray, offset+53, 50, nil, nil, false)
-            end
+            draw_item((MOVEMENT_VALUE & HIGH_JUMP_VALUE) == HIGH_JUMP_VALUE, ITEM_DEFS.highjump)
+            draw_item((MOVEMENT_VALUE & SPEEDBOOSTER_VALUE) == SPEEDBOOSTER_VALUE, ITEM_DEFS.speed)
+            draw_item((MOVEMENT_VALUE & SPACE_JUMP_VALUE) == SPACE_JUMP_VALUE, ITEM_DEFS.spacejump)
+            draw_item((MOVEMENT_VALUE & SCREW_ATTACK_VALUE) == SCREW_ATTACK_VALUE, ITEM_DEFS.screwattack)
 
-            if BEAMS_VALUE & ICE_VALUE == ICE_VALUE then
-                gui.drawImage(IMAGES.icebeam, offset+70, 50, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.icebeam_gray, offset+70, 50, nil, nil, false)
+            if INCLUDE_L0 then
+                draw_item((SECURITY_VALUE & GRAY_VALUE) == GRAY_VALUE, ITEM_DEFS.l0)
             end
-
-            if WEAPONS_VALUE & BASE_MISSILE_VALUE == BASE_MISSILE_VALUE then
-                gui.drawImage(IMAGES.missiles, offset+10, 68, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.missiles_gray, offset+10, 68, nil, nil, false)
-            end
-
-            if WEAPONS_VALUE & SUPER_MISSILE_VALUE == SUPER_MISSILE_VALUE then
-                gui.drawImage(IMAGES.supers, offset+26, 68)
-            else
-                gui.drawImage(IMAGES.supers_gray, offset+26, 68, nil, nil, false)
-            end
-
-            if WEAPONS_VALUE & ICE_MISSILE_VALUE == ICE_MISSILE_VALUE then
-                gui.drawImage(IMAGES.icemissiles, offset+43, 68, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.icemissiles_gray, offset+43, 68, nil, nil, false)
-            end
-
-            if WEAPONS_VALUE & DIFFUSION_MISSILE_VALUE == DIFFUSION_MISSILE_VALUE then
-                gui.drawImage(IMAGES.diffusion, offset+60, 68, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.diffusion_gray, offset+60, 68, nil, nil, false)
-            end
-
-            if MOVEMENT_VALUE & MORPH_BALL_VALUE == MORPH_BALL_VALUE then
-                gui.drawImage(IMAGES.morph, offset+2, 86, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.morph_gray, offset+2, 86, nil, nil, false)
-            end
-
-            if WEAPONS_VALUE & BOMBS_VALUE == BOMBS_VALUE then
-                gui.drawImage(IMAGES.bombs, offset+19, 86, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.bombs_gray, offset+19, 86, nil, nil, false)
-            end
-
-            if WEAPONS_VALUE & POWER_BOMBS_VALUE == POWER_BOMBS_VALUE then
-                gui.drawImage(IMAGES.powerbombs, offset+36, 86, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.powerbombs_gray, offset+36, 86, nil, nil, false)
-            end
-
-            if MOVEMENT_VALUE & VARIA_VALUE == VARIA_VALUE then
-                gui.drawImage(IMAGES.varia, offset+53, 86, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.varia_gray, offset+53, 86, nil, nil, false)
-            end
-
-            if MOVEMENT_VALUE & GRAVITY_VALUE == GRAVITY_VALUE then
-                gui.drawImage(IMAGES.gravity, offset+70, 86, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.gravity_gray, offset+70, 86, nil, nil, false)
-            end
-
-            if MOVEMENT_VALUE & HIGH_JUMP_VALUE == HIGH_JUMP_VALUE then
-                gui.drawImage(IMAGES.highjump, offset+9, 104, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.highjump_gray, offset+9, 104, nil, nil, false)
-            end
-
-            if MOVEMENT_VALUE & SPEEDBOOSTER_VALUE == SPEEDBOOSTER_VALUE then
-                gui.drawImage(IMAGES.speed, offset+26, 104, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.speed_gray, offset+26, 104, nil, nil, false)
-            end
-
-            if MOVEMENT_VALUE & SPACE_JUMP_VALUE == SPACE_JUMP_VALUE then
-                gui.drawImage(IMAGES.spacejump, offset+43, 104, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.spacejump_gray, offset+43, 104, nil, nil, false)
-            end
-
-            if MOVEMENT_VALUE & SCREW_ATTACK_VALUE == SCREW_ATTACK_VALUE then
-                gui.drawImage(IMAGES.screwattack, offset+60, 104, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.screwattack_gray, offset+60, 104, nil, nil, false)
-            end
-
-            if (SECURITY_VALUE & GRAY_VALUE == GRAY_VALUE) and INCLUDE_L0 then
-                gui.drawImage(IMAGES.l1, offset+2, 122, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.l1_gray, offset+2, 122, nil, nil, false)
-            end
-
-            if SECURITY_VALUE & BLUE_VALUE == BLUE_VALUE then
-                gui.drawImage(IMAGES.l1, offset+l0offset+9, 122, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.l1_gray, offset+l0offset+9, 122, nil, nil, false)
-            end
-
-            if SECURITY_VALUE & GREEN_VALUE == GREEN_VALUE then
-                gui.drawImage(IMAGES.l2, offset+l0offset+26, 122, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.l2_gray, offset+l0offset+26, 122, nil, nil, false)
-            end
-
-            if SECURITY_VALUE & YELLOW_VALUE == YELLOW_VALUE then
-                gui.drawImage(IMAGES.l3, offset+l0offset+43, 122, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.l3_gray, offset+l0offset+43, 122, nil, nil, false)
-            end
-
-            if SECURITY_VALUE & RED_VALUE == RED_VALUE then
-                gui.drawImage(IMAGES.l4, offset+l0offset+60, 122, nil, nil, false)
-            else
-                gui.drawImage(IMAGES.l4_gray, offset+l0offset+60, 122, nil, nil, false)
-            end
-
-            gui.drawImage(IMAGES.metroid, offset+20, 140, nil, nil, false)
-            gui.drawString(offset+37, 142, " " .. METROIDS_OBTAINED_VALUE .. "/" .. METROIDS_REQUIRED_VALUE,"white")
+            draw_item((SECURITY_VALUE & BLUE_VALUE) == BLUE_VALUE, ITEM_DEFS.l1, l0offset)
+            draw_item((SECURITY_VALUE & GREEN_VALUE) == GREEN_VALUE, ITEM_DEFS.l2, l0offset)
+            draw_item((SECURITY_VALUE & YELLOW_VALUE) == YELLOW_VALUE, ITEM_DEFS.l3, l0offset)
+            draw_item((SECURITY_VALUE & RED_VALUE) == RED_VALUE, ITEM_DEFS.l4, l0offset)
+            
+            draw_item(true, ITEM_DEFS.metroid)
+            gui.drawString(global_offset+37, 142, " " .. METROIDS_OBTAINED_VALUE .. "/" .. METROIDS_REQUIRED_VALUE,"white")
 
             --caches the player's loadout after obtaining an item
             BEAMS_PRIOR = BEAMS_VALUE
