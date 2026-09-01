@@ -1,11 +1,37 @@
 --written by baria and clue :D
 
--- USER CONFIGURABLE SETTINGS:
+-- Settings for the tracker, can be changed in settings.ini
 local TRACKER_DIRECTION = "left" -- values are "left" and "right"
 local INCLUDE_L0 = false  -- values are true and false
 
+-- Get directory from lua script
+local pwd = ""
+local dir_seperator = package.config:sub(1,1)
+if dir_seperator == "\\" then
+    pwd = io.popen("cd"):read()
+else
+    pwd = io.popen("pwd"):read()
+end
 
--- Script starts here
+-- Check if settings file exists and read them
+local settings = pwd .. dir_seperator .. "settings.ini"
+local file = io.open(settings, "r")
+if file then
+    file:close()
+    -- read settings from file
+    for line in io.lines(settings) do
+        local key, value = line:match("([%w_]+)%s*=%s*(.+)")
+        if key and value then
+            if key == "TRACKER_DIRECTION" then
+                TRACKER_DIRECTION = value:gsub('"', '') -- remove quotes
+            elseif key == "INCLUDE_L0" then
+                INCLUDE_L0 = (value == "true") -- convert to boolean
+            end
+        end
+    end
+end
+
+
 local CHECK_INTERVAL = 30 --number of frames between memory reads
 
 --this variable chooses which memory read to perform on a given frame, then increments itself
