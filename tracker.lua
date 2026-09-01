@@ -32,7 +32,7 @@ if file then
 end
 
 
-local CHECK_INTERVAL = 30 --number of frames between memory reads
+local CHECK_INTERVAL = 120 --number of frames between memory reads
 
 --this variable chooses which memory read to perform on a given frame, then increments itself
 local ADDRESS_SELECTOR = 1
