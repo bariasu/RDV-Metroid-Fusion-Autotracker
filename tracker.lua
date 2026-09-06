@@ -1,7 +1,7 @@
---written by baria and clue :D
+--written by baria, clue, and miepee :D
 
 -- Settings for the tracker, can be changed in settings.ini
-local TRACKER_DIRECTION = "left" -- values are "left" and "right"
+local TRACKER_PLACEMENT = "left" -- values are "left" and "right"
 local INCLUDE_L0 = false  -- values are true and false
 
 -- Get directory from lua script
@@ -22,8 +22,8 @@ if file then
     for line in io.lines(settings) do
         local key, value = line:match("([%w_]+)%s*=%s*(.+)")
         if key and value then
-            if key == "TRACKER_DIRECTION" then
-                TRACKER_DIRECTION = value:gsub('"', '') -- remove quotes
+            if key == "TRACKER_PLACEMENT" then
+                TRACKER_PLACEMENT = value:gsub('"', '') -- remove quotes
             elseif key == "INCLUDE_L0" then
                 INCLUDE_L0 = (value == "true") -- convert to boolean
             end
@@ -122,13 +122,13 @@ local ITEM_DEFS = {
 --creates the empty space within the bizhawk window
 local padding = 88
 local global_offset = 0
-if TRACKER_DIRECTION == "left" then
+if TRACKER_PLACEMENT == "left" then
     client.SetGameExtraPadding(padding, 0, 0, 0)
-elseif TRACKER_DIRECTION == "right" then
+elseif TRACKER_PLACEMENT == "right" then
     client.SetGameExtraPadding(0, 0, padding, 0)
     global_offset = 240
 else 
-    error("Invalid configuration for TRACKER_DIRECTION")
+    error("Invalid configuration for TRACKER_PLACEMENT")
 end
 
 local l0offset = 0
