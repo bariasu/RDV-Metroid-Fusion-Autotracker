@@ -4,22 +4,17 @@
 local TRACKER_PLACEMENT = "left" -- values are "left" and "right"
 local INCLUDE_L0 = false  -- values are true and false
 
--- Get directory from lua script
-local pwd = ""
-local dir_seperator = package.config:sub(1,1)
-if dir_seperator == "\\" then
-    pwd = io.popen("cd"):read()
-else
-    pwd = io.popen("pwd"):read()
-end
-
 -- Check if settings file exists and read them
-local settings = pwd .. dir_seperator .. "settings.ini"
+local settings = "settings.ini"
 local file = io.open(settings, "r")
 if file then
     file:close()
     -- read settings from file
     for line in io.lines(settings) do
+        -- Lua pattern documentation: https://www.lua.org/manual/5.1/manual.html#5.4.1
+        -- First group has one or more alphanumeric characters + underscore
+        -- Then followed by potential whitespace, an equal sign and more potential whitespace
+        -- Second group has one or more arbitrary characters
         local key, value = line:match("([%w_]+)%s*=%s*(.+)")
         if key and value then
             if key == "TRACKER_PLACEMENT" then
